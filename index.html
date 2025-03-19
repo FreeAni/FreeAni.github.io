@@ -1,0 +1,375 @@
+
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>FreeAnimate</title>
+
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- <base href="/"> -->
+
+        <!--FACEBOOK-->
+    <meta property="og:image" content="">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="682">
+    <meta property="og:image:height" content="682">
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content=""/>
+    <meta property="og:title" content="FreeAnimate" />
+    <meta property="og:description" content="Project page for FreeAnimate" />
+
+        <!--TWITTER-->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="FreeAnimate" />
+    <meta name="twitter:description" content="Project page for FreeAnimate." />
+    <meta name="twitter:image" content="" />
+
+
+    <!--<link rel="apple-touch-icon" href="apple-touch-icon.png"> -->
+    <!-- <link rel="icon" type="image/png" href="img/seal_icon.png"> -->
+    <!-- Place favicon.ico in the root directory -->
+
+    <script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.css">
+    <link rel="stylesheet" href="css/app.css">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.3/clipboard.min.js"></script>
+    
+    <script src="js/app.js"></script>
+</head>
+
+<body>
+    <br>
+    <div class="container" id="main" style="width: 85%;">
+    <!-- <div class="container" id="main"> -->
+        <div class="row">
+            <h2 class="col-md-12 text-center">
+                <b>FreeAnimate</b>: Training-Free Human Image Animation with Preview-Guided Denoising</br>
+            </h2>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <ul class="list-inline">
+                    <li>
+                        <br><p>Anonymous Submission</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- 左侧文本部分 -->
+            <div class="col-md-4 col-md-offset-2">
+                <h3 style="font-weight: bold;">
+                    Abstract
+                </h3>
+                <p class="text-justify">
+                    Human Image Animation has seen significant advancements, primarily driven by diffusion models. However, existing HIA methods typically demand substantial training data and resources to achieve high-quality results, limiting generalization and accessibility. 
+                    In this work, we introduce <strong>FreeAnimate</strong>, a training-free framework that leverages the inherent capabilities of image diffusion models to enable temporal consistency, identity preservation, and background stability. 
+                    Our approach incorporates a novel preview generation strategy that provides temporal and structural priors from generated preview frames, effectively guiding pose alignment and background consistency without training. 
+                    Additionally, <strong>FreeAnimate</strong> introduces Inversion-Boosted Attention and Reference-Anchored Self-Attention modules to guarantee temporal consistency and identity preservation. 
+                    Experimental results demonstrate that <strong>FreeAnimate</strong> outperforms existing training-free competitors and training-based baseline methods, achieving generation quality comparable to state-of-the-art methods and offering robust generalization across diverse datasets. 
+                </p>
+            </div>
+        
+            <!-- 右侧图像部分 -->
+            <div class="col-md-4 col-md-offset-0 text-center">
+                <img width="95%" src="assets/teaser.png" class="img-responsive" alt="preview_generation">
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h3 style="font-weight: bold;">
+                    Network Architecture
+                </h3>
+                <p class="text-justify">
+                    The overview of <strong>FreeAnimate</strong>. We introduce a novel network architecture that combines a U-Net with ControlNet, offering a more efficient approach to incorporating reference image content and structure into the U-Net without relying on CLIP image encoder or Appearance Net. 
+                    Specifically, our method incorporates three crucial components in addition to the basic SD model: Control branch, Inversion-Boosted Attention, and Reference-Anchored Self-Attention.
+                </p>
+                <br><img width="90%" src="assets/pipeline.png" class="img-responsive" alt="overview" style="margin:auto"><br>
+                <div style="margin-left: 40px;">
+                    <h4 style="font-weight: bold;">Control Branch</h4>
+                    <p class="text-justify">
+                        The Control Branch is responsible for effectively incorporating pose guidance into the generation process. It leverages a pre-trained ControlNet to encode the pose sequence and injects this information into the U-Net. Unlike traditional methods that require additional training or fine-tuning, our approach utilizes ControlNet as a plug-and-play module, enabling the model to directly align generated frames with the provided pose sequence. This setup avoids the need for large-scale training and ensures that the generated video follows the desired pose sequence while maintaining computational efficiency.
+                    </p>
+                </div>
+                
+                <div style="margin-left: 40px;">
+                    <h4 style="font-weight: bold;">Inversion-Boosted Attention</h4>
+                    <p class="text-justify">
+                        Inversion-Boosted Attention (IBA) improves temporal consistency by leveraging attention maps extracted from preview frames 
+                        during DDIM inversion. These maps refine both self- and cross-attention, enhancing video coherence and structural stability.
+                    </p>
+                    <p class="text-justify">
+                        Inspired by FateZero, IBA uses DDIM inversion attention maps to guide denoising. At each step \( t \), we store the 
+                        self-attention maps \( \left[\textit{s}_{t}^{\text{pre}}\right]_{t=1}^{T} \) and cross-attention maps 
+                        \( \left[\textit{c}_{t}^{\text{pre}}\right]_{t=1}^{T} \) as follows:
+                    </p>
+                    <!-- First Equation -->
+                    <div class="text-center">
+                        \[
+                        z_{T},\left[\textit{s}_{t}^{\text{pre}}\right]_{t=1}^{T},\left[\textit{c}_{t}^{\text{pre}}\right]_{t=1}^{T}=
+                        \operatorname{DDIM-INV}\left(z_{0}\right).
+                        \]
+                    </div>
+                    <p class="text-justify">
+                        where \( \operatorname{DDIM-INV} \) represents the DDIM inversion process. During denoising, these attention maps refine the attention computation:
+                    </p>
+                    <!-- Second Equation -->
+                    <div class="text-center">
+                        \[
+                        \text{SELF-ATT}= 
+                        \operatorname{Softmax} \left(\frac{Q_{s}^{\text{pre}} {K_{s}^{\text{pre}}}^T}{\sqrt{d}}\right) \cdot V_{s} 
+                        =\textit{s}_{t}^{\text{pre}} \cdot V_{s}, 
+                        \]
+                    </div>
+                    <!-- Third Equation -->
+                    <div class="text-center">
+                        \[
+                        \text{CROSS-ATT}= 
+                        \operatorname{Softmax} \left(\frac{Q_{c}^{\text{pre}} {K_{c}^{\text{pre}}}^T}{\sqrt{d}}\right) \cdot V_{c}
+                        =\textit{c}_{t}^{\text{pre}} \cdot V_{c}.
+                        \]
+                    </div>
+                    <p class="text-justify">
+                        Here, \( Q_{s}^{\text{pre}}, K_{s}^{\text{pre}}, V_{s} \) and \( Q_{c}^{\text{pre}}, K_{c}^{\text{pre}}, V_{c} \) denote the 
+                        query, key, and value projections for self- and cross-attention, respectively, with \( d \) being the attention feature dimension.
+                    </p>
+                    <p class="text-justify">
+                        By leveraging precomputed self- and cross-attention maps, IBA helps preserve motion integrity and spatial structure while reducing 
+                        artifacts. These maps act as guidance signals, improving both temporal coherence and structural alignment during generation.
+                    </p>
+                </div>
+                
+                <div style="margin-left: 40px;">
+                    <h4 style="font-weight: bold;">Reference-Anchored Self-Attention</h4>
+                    <p class="text-justify">
+                        Reference-Anchored Self-Attention (RA-SA) improves temporal consistency by anchoring frames to a reference image. 
+                        By integrating both the current and reference latents, RA-SA enhances identity preservation throughout the video.
+                    </p>
+                    <p class="text-justify">
+                        Specifically, \( \text{SELF-ATTENTION}(Q, K, V) \) for the latent code \( z^{i}_{t} \) of frame \( i \) at time step \( t \) is computed as:
+                    </p>
+                    <!-- First Equation -->
+                    <div class="text-center">
+                        \[
+                        Q = W^{Q} z^{i}_{t}, \quad K = W^{K}\left[z^{i}_{t} ; z^{a}_{t}\right], \quad V = W^{V}\left[z^{i}_{t} ; z^{a}_{t}\right].
+                        \]
+                    </div>
+                    <p class="text-justify">
+                        where \( W^Q \), \( W^K \), and \( W^V \) are projection matrices from the U-Net, and \( \left[\cdot\right] \) denotes concatenation.
+                        \( z^{i}_{t} \) and \( z^{a}_{t} \) represent the latents of the current and anchor frames, respectively. While **Pixel2Video** and **FateZero** 
+                        set \( a \) to \( 1 \) and \( \left\lfloor \frac{N}{2} \right\rfloor \), we use \( I_{ref} \) as the anchor frame for improved alignment.
+                    </p>
+                    <p class="text-justify">
+                        During DDIM inversion, RA-SA replaces standard self-attention, modifying the self-attention map dimensions from \( R^{hw \times hw} \) to \( R^{hw \times 2hw} \).
+                        In the denoising process, query and key features originate from DDIM inversion attention maps, while value features are computed dynamically using the current and reference latents:
+                    </p>
+                    <!-- Second Equation -->
+                    <div class="text-center">
+                        \[
+                        Q = W^{Q} z^{i}_{t}, \quad K = W^{K}\left[z^{i}_{t} ; z^{a}_{t}\right], \quad V = W^{V}\left[z^{i}_{t} ; z^{a}_{t}\right].
+                        \]
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="row"> 
+            <div class="col-md-8 col-md-offset-2">
+                <h3 style="font-weight: bold;">
+                    Preview Generation Strategy
+                </h3>
+                <p class="text-justify">
+                    The overview of <strong>Preview Generation Strategy</strong>. We propose a general strategy to generate preview frames closely aligned with the target frames in HIA tasks, 
+                    enabling more accurate generation using powerful pretrained models.
+                </p>
+                <br><image width="45%" src="assets/preview.png" class="img-responsive" alt="preview_generation" style="margin:auto"><br>
+            </div>
+        </div>
+
+
+        <div class="row"> 
+            <div class="col-md-8 col-md-offset-2">
+                <h3 style="font-weight: bold;">
+                    Comparisions with Existed Approaches
+                </h3>
+                <p class="text-justify">
+                    we present a qualitative comparison of FreeAine with other methods. 
+                    FreeAine demonstrates competitive performance against training-based approaches, with visually superior generation quality compared to the well-established baseline, DisCo. 
+                    Since our method is training-free, it exhibits strong generalization across various datasets.
+                </p>
+                <br><image width="100%" src="assets/compare_result.png" class="img-responsive" alt="compare_result" style="margin:auto"><br>            
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h3 style="font-weight: bold;"> 
+                    Animation on TikTok Dataset
+                </h3>
+                <table border="0" cellspacing="0" cellpadding="0" align="center">
+                    <tr>
+                        <td align="center" valign="middle">
+                            <video id="v0" width="99%" autoplay loop muted controls>
+                                <source src="assets\videos\Animation_on_TikTok_Dataset\video_1.mp4" type="video/mp4" />
+                            </video>
+                        </td>
+                        <td align="center" valign="middle">
+                            <video id="v0" width="99%" autoplay loop muted controls>
+                                <source src="assets\videos\Animation_on_TikTok_Dataset\video_3.mp4" type="video/mp4" />
+                            </video>
+                        </td>
+                    </tr>
+                </table>
+                <table border="0" cellspacing="0" cellpadding="0" align="center">
+                    <tr>
+                        <td align="center" valign="middle">
+                            <video id="v0" width="99%" autoplay loop muted controls>
+                                <source src="assets\videos\Animation_on_TikTok_Dataset\video_10.mp4" type="video/mp4" />
+                            </video>
+                        </td>
+                        <td align="center" valign="middle">
+                            <video id="v0" width="99%" autoplay loop muted controls>
+                                <source src="assets\videos\Animation_on_TikTok_Dataset\video_6.mp4" type="video/mp4" />
+                            </video>
+                        </td>
+                    </tr>
+                </table>
+                <table border="0" cellspacing="0" cellpadding="0" align="center">
+                    <tr>
+                        <td align="center" valign="middle">
+                            <video id="v0" width="99%" autoplay loop muted controls>
+                                <source src="assets\videos\Animation_on_TikTok_Dataset\video_7.mp4" type="video/mp4" />
+                            </video>
+                        </td>
+                        <td align="center" valign="middle">
+                            <video id="v0" width="99%" autoplay loop muted controls>
+                                <source src="assets\videos\Animation_on_TikTok_Dataset\video_9.mp4" type="video/mp4" />
+                            </video>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h3 style="font-weight: bold;">
+                    Animation on TED-talks Dataset
+                </h3>
+                <table border="0" cellspacing="0" cellpadding="0" align="center">
+                    <tr>
+                        <td align="center" valign="middle">
+                            <video id="v0" width="99%" autoplay loop muted controls>
+                                <source src="assets\videos\Animation_on_TEDtalks_Dataset\video3.mp4" type="video/mp4" />
+                            </video>
+                        </td>
+                        <td align="center" valign="middle">
+                            <video id="v0" width="99%" autoplay loop muted controls>
+                                <source src="assets\videos\Animation_on_TEDtalks_Dataset\video5.mp4" type="video/mp4" />
+                            </video>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h3 style="font-weight: bold;">
+                    Animation on EverybodyDanceNow Dataset
+                </h3>
+                <table border="0" cellspacing="0" cellpadding="0" align="center">
+                    <tr>
+                        <td align="center" valign="middle">
+                            <video id="v0" width="99%" autoplay loop muted controls>
+                                <source src="assets\videos\Animation_on_EDN_Dataset\subject1.mp4" type="video/mp4" />
+                            </video>
+                        </td>
+                        <td align="center" valign="middle">
+                            <video id="v0" width="99%" autoplay loop muted controls>
+                                <source src="assets\videos\Animation_on_EDN_Dataset\subject3.mp4" type="video/mp4" />
+                            </video>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h3 style="font-weight: bold;">
+                    Other domain results
+                </h3>
+                <p class="text-justify">
+                    <strong>FreeAine</strong> exhibits robust generalization capabilities on Other domains. 
+                    We use StableAnimator's pose alignment method to align the poses between the driving video and the reference image. 
+                    Below, the left side of each video shows the driving pose, and the right side shows the aligned pose.
+                </p>            
+                <table border="0" cellspacing="0" cellpadding="0" align="center">
+                    <tr>
+                        <td align="center" valign="middle" width="20%">
+                            <video id="v0" width="99%" autoplay loop muted controls>
+                                <source src="assets/videos/Animation_on_OtherDomain_Dataset/driving_video_1_frames-1-4in1.mp4" type="video/mp4" />
+                            </video>
+                        </td>
+                        <td align="center" valign="middle" width="20%">
+                            <video id="v0" width="99%" autoplay loop muted controls>
+                                <source src="assets/videos/Animation_on_OtherDomain_Dataset/driving_video_2_frames-9-4in1.mp4" type="video/mp4" />
+                            </video>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" valign="middle" width="20%">
+                            <video id="v0" width="99%" autoplay loop muted controls>
+                                <source src="assets/videos/Animation_on_OtherDomain_Dataset/driving_video_5_frames-4-4in1.mp4" type="video/mp4" />
+                            </video>
+                        </td>
+                        <td align="center" valign="middle" width="20%">
+                            <video id="v0" width="99%" autoplay loop muted controls>
+                                <source src="assets/videos/Animation_on_OtherDomain_Dataset/driving_video_6_frames-13-4in1.mp4" type="video/mp4" />
+                            </video>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h3>
+                    Acknowledgements
+                </h3>
+                <p class="text-justify">
+                The website template was borrowed from <a href="http://mgharbi.com/">Michaël Gharbi</a> and <a href="https://jonbarron.info/mipnerf/">Mip-NeRF</a>.
+                </p>
+            </div>
+        </div>
+
+    </div>  
+    <br><br><br>
+</body>
+</html>
